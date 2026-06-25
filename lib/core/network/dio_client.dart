@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_interceptor.dart';
-import '../../features/auth/presentation/providers/auth_provider.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
@@ -19,10 +18,6 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(
     AuthInterceptor(
       dio: dio,
-      onForceLogout: () {
-        // Gọi hàm xử lý Force Logout bên authStateProvider để đồng bộ trạng thái
-        ref.read(authStateProvider.notifier).handleForceLogout();
-      },
     ),
   );
 

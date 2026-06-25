@@ -138,11 +138,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // Settings section
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
+                  child: Text(
+                    'BẢO MẬT & XÁC THỰC',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
                   ),
-                  child: Text('BẢO MẬT & XÁC THỰC'),
                 ),
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16),

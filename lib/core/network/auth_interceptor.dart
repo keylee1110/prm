@@ -1,15 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import '../security/secure_storage.dart';
 
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
-  final VoidCallback _onForceLogout;
+  VoidCallback? onForceLogout;
 
   AuthInterceptor({
     required Dio dio,
-    required VoidCallback onForceLogout,
-  })  : _dio = dio,
-        _onForceLogout = onForceLogout;
+    this.onForceLogout,
+  })  : _dio = dio;
 
   @override
   Future<void> onRequest(
@@ -34,7 +34,7 @@ class AuthInterceptor extends QueuedInterceptor {
       final refreshToken = await SecureStorage.instance.getRefreshToken();
       if (refreshToken == null || refreshToken.isEmpty) {
         // No refresh token available, force logout
-        _onForceLogout();
+        onForceLogout?.call();
         return handler.next(err);
       }
 
@@ -79,7 +79,7 @@ class AuthInterceptor extends QueuedInterceptor {
       } catch (e) {
         // Refresh token failed or threw an exception
         await SecureStorage.instance.clearTokens();
-        _onForceLogout();
+        onForceLogout?.call();
         return handler.next(err);
       }
     }

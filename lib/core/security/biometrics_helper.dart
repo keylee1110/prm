@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:local_auth_android/local_auth_android.dart';
-import 'package:local_auth_ios/local_auth_ios.dart';
 
 class BiometricsHelper {
   BiometricsHelper._privateConstructor();
@@ -32,16 +30,6 @@ class BiometricsHelper {
           stickyAuth: true,
           biometricOnly: true,
         ),
-        authMessages: const <AuthMessages>[
-          AndroidAuthMessages(
-            signInTitle: 'Xác thực sinh trắc học',
-            biometricHint: 'Chạm vân tay hoặc quét khuôn mặt',
-            cancelButton: 'Hủy',
-          ),
-          IOSAuthMessages(
-            cancelButton: 'Hủy',
-          ),
-        ],
       );
       return didAuthenticate;
     } on PlatformException catch (_) {
@@ -49,3 +37,4 @@ class BiometricsHelper {
     }
   }
 }
+

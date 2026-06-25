@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/auth_repository.dart';
 import '../../data/models/user_model.dart';
 import '../../../../core/security/secure_storage.dart';
+import '../../../../core/network/dio_client.dart';
+import '../../../../core/network/auth_interceptor.dart';
 
 sealed class AuthState {}
 
@@ -20,7 +22,17 @@ class AuthError extends AuthState {
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository) : super(AuthInitial()) {
+  AuthNotifier(this._repository, Ref ref) : super(AuthInitial()) {
+    // Bind Force Logout callback dynamically to resolve circular dependency
+    try {
+      final dio = ref.read(dioProvider);
+      final interceptor = dio.interceptors.firstWhere((i) => i is AuthInterceptor) as AuthInterceptor;
+      interceptor.onForceLogout = () {
+        handleForceLogout();
+      };
+    } catch (_) {
+      // Fallback if interceptor is not registered
+    }
     checkAuth();
   }
 
@@ -74,6 +86,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
-final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(ref.read(authRepositoryProvider));
+// Explicitly type authStateProvider to resolve compiler inference warnings
+final StateNotifierProvider<AuthNotifier, AuthState> authStateProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  return AuthNotifier(ref.read(authRepositoryProvider), ref);
 });
